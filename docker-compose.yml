@@ -10,5 +10,8 @@ services:
     build: ./miner
     environment:
       - VISUALIZER_URL=http://visualizer:4000/events
+      - PROCESSED_FILE=/app/state/processed.json
+    volumes:
+      - ./miner/state:/app/state
     depends_on:
       - visualizer
