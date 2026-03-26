@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Top Words</title></head>
+<body>
+<h1>Top words</h1>
+<label>Top N: <input id="n" value="10" size="3"></label>
+<button id="refresh">Refresh</button>
+<ul id="list"></ul>
+<script>
+const ws = new WebSocket((location.protocol==='https:'?'wss://':'ws://') + location.host);
+const list = document.getElementById('list');
+const nInput = document.getElementById('n');
+async function refresh(){
+  const n = parseInt(nInput.value||'10',10);
+  const res = await fetch('/top/'+n);
+  const j = await res.json();
+  list.innerHTML = '';
+  j.top.forEach(it=>{
+    const li = document.createElement('li');
+    li.textContent = `${it.word} — ${it.count}`;
+    list.appendChild(li);
+  });
+}
+document.getElementById('refresh').onclick = refresh;
+ws.onmessage = e=>{
+  const msg = JSON.parse(e.data);
+  if (msg.type === 'snapshot') refresh();
+  if (msg.type === 'update') refresh();
+};
+refresh();
+</script>
+</body>
+</html>

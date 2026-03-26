@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  visualizer:
+    build: ./visualizer
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./visualizer/data:/app/data
+  miner:
+    build: ./miner
+    environment:
+      - VISUALIZER_URL=http://visualizer:4000/events
+    depends_on:
+      - visualizer
